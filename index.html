@@ -33,13 +33,6 @@
             left: 0;
             right: 0;
             bottom: 0;
-            /* Initially hide iframe until loaded */
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        
-        iframe.loaded {
-            opacity: 1;
         }
         
         .loading {
@@ -53,172 +46,134 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            /* Ensure loading is visible by default */
-            display: block;
+            width: 200px;
         }
         
-        /* Spinner Animation */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 15px;
-            position: relative;
+        /* Horizontal dots animation */
+        .dots-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
         }
         
-        .spinner-circle {
-            width: 100%;
-            height: 100%;
-            border: 4px solid transparent;
-            border-top-color: #0f766e;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        .spinner-circle:before {
-            content: "";
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            border: 4px solid transparent;
-            border-top-color: #14b8a6;
-            border-radius: 50%;
-            animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        
-        /* Pulse Animation */
-        .pulse {
-            width: 10px;
-            height: 10px;
-            background-color: #0f766e;
+        .dot {
+            width: 12px;
+            height: 12px;
+            margin: 0 5px;
+            background-color: #0ea5e9;
             border-radius: 50%;
             display: inline-block;
-            margin: 0 5px;
-            animation: pulse 1.5s infinite ease-in-out;
+            animation: jumpingDots 1.2s ease-in-out infinite;
         }
         
-        .pulse:nth-child(2) {
-            animation-delay: 0.3s;
+        .dot:nth-child(1) {
+            animation-delay: 0s;
         }
         
-        .pulse:nth-child(3) {
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .dot:nth-child(4) {
             animation-delay: 0.6s;
         }
         
-        @keyframes pulse {
+        @keyframes jumpingDots {
             0%, 100% {
-                transform: scale(0.8);
-                opacity: 0.5;
+                transform: translateY(0);
             }
             50% {
-                transform: scale(1.2);
-                opacity: 1;
+                transform: translateY(-15px);
+            }
+        }
+        
+        /* Progress bar animation */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #0ea5e9;
+            animation: progressAnimation 2s ease-in-out infinite;
+        }
+        
+        @keyframes progressAnimation {
+            0% {
+                width: 0%;
+            }
+            50% {
+                width: 100%;
+            }
+            100% {
+                width: 0%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading animation container -->
     <div class="loading" id="loading">
-        <div class="spinner">
-            <div class="spinner-circle"></div>
+        <div class="dots-container">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
-        <div>
-            <div class="pulse"></div>
-            <div class="pulse"></div>
-            <div class="pulse"></div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
         </div>
     </div>
-    
-    <!-- Initially hidden iframe -->
     <iframe 
         id="mainFrame"
         title="Keuangan Kiosnett" 
         allowfullscreen
         scrolling="yes"
+        onload="document.getElementById('loading').style.display='none';"
     ></iframe>
 
     <script>
-        // Get references to elements
-        const loadingElement = document.getElementById('loading');
-        const iframeElement = document.getElementById('mainFrame');
-        
         // Function to load iframe with cache-busting parameter
         function loadFreshContent() {
-            // Show loading animation
-            loadingElement.style.display = 'block';
-            
-            // Remove loaded class from iframe
-            iframeElement.classList.remove('loaded');
-            
-            // Create URL with cache buster
             const timestamp = new Date().getTime();
             const baseUrl = "https://kzmkc8totgc7jdx4jsxj.lite.vusercontent.net/";
             const cacheBreaker = `?_=${timestamp}`;
-            
-            // Set iframe source
-            iframeElement.src = baseUrl + cacheBreaker;
+            document.getElementById('mainFrame').src = baseUrl + cacheBreaker;
         }
-        
-        // Handle iframe load event
-        iframeElement.addEventListener('load', function() {
-            // Add a slight delay to ensure content is rendered
-            setTimeout(function() {
-                // Hide loading animation
-                loadingElement.style.display = 'none';
-                
-                // Show iframe with transition
-                iframeElement.classList.add('loaded');
-            }, 500); // 500ms delay to ensure content is visible
-        });
-        
-        // Set a timeout in case iframe load event doesn't fire
-        function setLoadingTimeout() {
-            setTimeout(function() {
-                if (loadingElement.style.display !== 'none') {
-                    // Hide loading animation after timeout
-                    loadingElement.style.display = 'none';
-                    iframeElement.classList.add('loaded');
-                }
-            }, 10000); // 10 second timeout
-        }
-        
+
         // Load fresh content initially
         loadFreshContent();
-        setLoadingTimeout();
-        
+
         // Check for updates every 5 minutes (300000 ms)
         setInterval(function() {
             loadFreshContent();
-            setLoadingTimeout();
         }, 300000);
-        
+
         // Function to reload iframe content on visibility change
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === 'visible') {
                 // Reload content when tab becomes visible again
                 loadFreshContent();
-                setLoadingTimeout();
             }
         });
-        
+
         // Add event listener for manual refresh with F5 or Ctrl+R
         window.addEventListener('keydown', function(e) {
             // Check for F5 (code 116) or Ctrl+R (code 82 with ctrlKey)
             if (e.keyCode === 116 || (e.keyCode === 82 && e.ctrlKey)) {
                 e.preventDefault();
+                document.getElementById('loading').style.display = 'block';
                 loadFreshContent();
-                setLoadingTimeout();
             }
         });
     </script>
