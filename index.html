@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keuangan Kiosnett</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            color: black;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .iframe-container {
+            flex: 1;
+            width: 100%;
+            position: relative;
+        }
+        
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .loading p {
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Keuangan Kiosnett</h1>
+        </div>
+        <div class="iframe-container">
+            <div class="loading" id="loading">
+                <div>Memuat...</div>
+                <p>Mohon tunggu sebentar</p>
+            </div>
+            <iframe 
+                src="https://kzmkc8totgc7jdx4jsxj.lite.vusercontent.net/" 
+                title="Keuangan Kiosnett" 
+                id="mainFrame"
+                allowfullscreen
+                onload="document.getElementById('loading').style.display='none';"
+            ></iframe>
+        </div>
+    </div>
+</body>
+</html>
