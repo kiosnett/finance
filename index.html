@@ -33,6 +33,13 @@
             left: 0;
             right: 0;
             bottom: 0;
+            /* Initially hide iframe until loaded */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        iframe.loaded {
+            opacity: 1;
         }
         
         .loading {
@@ -46,6 +53,8 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            /* Ensure loading is visible by default */
+            display: block;
         }
         
         /* Spinner Animation */
@@ -119,6 +128,7 @@
     </style>
 </head>
 <body>
+    <!-- Loading animation container -->
     <div class="loading" id="loading">
         <div class="spinner">
             <div class="spinner-circle"></div>
@@ -129,46 +139,86 @@
             <div class="pulse"></div>
         </div>
     </div>
+    
+    <!-- Initially hidden iframe -->
     <iframe 
         id="mainFrame"
         title="Keuangan Kiosnett" 
         allowfullscreen
         scrolling="yes"
-        onload="document.getElementById('loading').style.display='none';"
     ></iframe>
 
     <script>
+        // Get references to elements
+        const loadingElement = document.getElementById('loading');
+        const iframeElement = document.getElementById('mainFrame');
+        
         // Function to load iframe with cache-busting parameter
         function loadFreshContent() {
+            // Show loading animation
+            loadingElement.style.display = 'block';
+            
+            // Remove loaded class from iframe
+            iframeElement.classList.remove('loaded');
+            
+            // Create URL with cache buster
             const timestamp = new Date().getTime();
             const baseUrl = "https://kzmkc8totgc7jdx4jsxj.lite.vusercontent.net/";
             const cacheBreaker = `?_=${timestamp}`;
-            document.getElementById('mainFrame').src = baseUrl + cacheBreaker;
+            
+            // Set iframe source
+            iframeElement.src = baseUrl + cacheBreaker;
         }
-
+        
+        // Handle iframe load event
+        iframeElement.addEventListener('load', function() {
+            // Add a slight delay to ensure content is rendered
+            setTimeout(function() {
+                // Hide loading animation
+                loadingElement.style.display = 'none';
+                
+                // Show iframe with transition
+                iframeElement.classList.add('loaded');
+            }, 500); // 500ms delay to ensure content is visible
+        });
+        
+        // Set a timeout in case iframe load event doesn't fire
+        function setLoadingTimeout() {
+            setTimeout(function() {
+                if (loadingElement.style.display !== 'none') {
+                    // Hide loading animation after timeout
+                    loadingElement.style.display = 'none';
+                    iframeElement.classList.add('loaded');
+                }
+            }, 10000); // 10 second timeout
+        }
+        
         // Load fresh content initially
         loadFreshContent();
-
+        setLoadingTimeout();
+        
         // Check for updates every 5 minutes (300000 ms)
         setInterval(function() {
             loadFreshContent();
+            setLoadingTimeout();
         }, 300000);
-
+        
         // Function to reload iframe content on visibility change
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === 'visible') {
                 // Reload content when tab becomes visible again
                 loadFreshContent();
+                setLoadingTimeout();
             }
         });
-
+        
         // Add event listener for manual refresh with F5 or Ctrl+R
         window.addEventListener('keydown', function(e) {
             // Check for F5 (code 116) or Ctrl+R (code 82 with ctrlKey)
             if (e.keyCode === 116 || (e.keyCode === 82 && e.ctrlKey)) {
                 e.preventDefault();
-                document.getElementById('loading').style.display = 'block';
                 loadFreshContent();
+                setLoadingTimeout();
             }
         });
     </script>
