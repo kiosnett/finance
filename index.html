@@ -15,37 +15,33 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        .container {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .iframe-container {
-            flex: 1;
-            width: 100%;
-            position: relative;
+            margin: 0;
+            padding: 0;
         }
         
         iframe {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            overflow: hidden;
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+            right: 0;
+            bottom: 0;
         }
         
         .loading {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 5px;
         }
         
         .loading p {
@@ -55,20 +51,17 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="iframe-container">
-            <div class="loading" id="loading">
-                <div>Memuat...</div>
-                <p>Mohon tunggu sebentar</p>
-            </div>
-            <iframe 
-                src="https://kzmkc8totgc7jdx4jsxj.lite.vusercontent.net/" 
-                title="Keuangan Kiosnett" 
-                id="mainFrame"
-                allowfullscreen
-                onload="document.getElementById('loading').style.display='none';"
-            ></iframe>
-        </div>
+    <div class="loading" id="loading">
+        <div>Memuat...</div>
+        <p>Mohon tunggu sebentar</p>
     </div>
+    <iframe 
+        src="https://kzmkc8totgc7jdx4jsxj.lite.vusercontent.net/" 
+        title="Keuangan Kiosnett" 
+        id="mainFrame"
+        allowfullscreen
+        scrolling="yes"
+        onload="document.getElementById('loading').style.display='none';"
+    ></iframe>
 </body>
 </html>
